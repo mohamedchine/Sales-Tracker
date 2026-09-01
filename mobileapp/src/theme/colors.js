@@ -1,0 +1,18 @@
+export default {
+  accent: '#0077cc',
+  primary: '#1976d2',
+  muted: '#666666',
+  text: '#111111',
+  border: '#eeeeee',
+  borderLight: '#f0f0f0',
+  danger: '#e53935',
+  dangerAlt: '#ff4d4f',
+  accordionHeader: '#403e3e',
+  accordionCount: '#b2b2b2',
+  tabBarGradientTop: '#ffffff',
+  tabBarGradientBottom: '#f8fbfb',
+  tabInactive: '#444444',
+  background: '#ffffff',
+  inputBorder: '#dddddd',
+  modalOverlay: 'rgba(0,0,0,0.4)',
+};

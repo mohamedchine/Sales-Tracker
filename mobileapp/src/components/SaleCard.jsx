@@ -1,0 +1,118 @@
+import React from 'react';
+import { View, Text, Pressable, Image, StyleSheet } from 'react-native';
+import colors from '../theme/colors';
+
+export default function SaleCard({ sale, onEdit, onDelete }) {
+  const formatPrice = (price) =>
+    new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+    }).format(price || 0);
+
+  const formatTime = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+  };
+
+  return (
+    <View style={styles.card}>
+      <View style={styles.imageWrap}>
+        {sale.imageUri ? (
+          <Image source={{ uri: sale.imageUri }} style={styles.image} resizeMode="cover" />
+        ) : (
+          <Text style={styles.placeholder}>No image</Text>
+        )}
+      </View>
+
+      <View style={styles.details}>
+        <View style={styles.header}>
+          <Text style={styles.name}>{sale.name}</Text>
+          <View style={styles.actions}>
+            <Pressable style={styles.iconBtn} onPress={() => onEdit(sale)}>
+              <Text style={styles.iconText}>✏️</Text>
+            </Pressable>
+            <Pressable style={[styles.iconBtn, styles.deleteBtn]} onPress={() => onDelete(sale._id)}>
+              <Text style={styles.iconText}>🗑️</Text>
+            </Pressable>
+          </View>
+        </View>
+
+        <Text style={styles.price}>{formatPrice(sale.price)}</Text>
+        <Text style={styles.time}>{formatTime(sale.createdAt)}</Text>
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  card: {
+    flexDirection: 'row',
+    paddingVertical: 12,
+    paddingHorizontal: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e5e5e5',
+    alignItems: 'center',
+  },
+  imageWrap: {
+    width: 74,
+    height: 74,
+    borderRadius: 8,
+    overflow: 'hidden',
+    backgroundColor: colors.borderLight,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  image: {
+    width: '100%',
+    height: '100%',
+  },
+  placeholder: {
+    color: colors.muted,
+    fontSize: 11,
+  },
+  details: {
+    flex: 1,
+    marginLeft: 12,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  name: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: colors.text,
+    flex: 1,
+  },
+  actions: {
+    flexDirection: 'row',
+    marginLeft: 8,
+  },
+  iconBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: 8,
+    backgroundColor: colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 6,
+  },
+  deleteBtn: {
+    backgroundColor: colors.danger,
+  },
+  iconText: {
+    fontSize: 14,
+  },
+  price: {
+    marginTop: 4,
+    fontSize: 18,
+    fontWeight: '700',
+    color: colors.text,
+  },
+  time: {
+    marginTop: 4,
+    color: colors.muted,
+    fontSize: 13,
+  },
+});
