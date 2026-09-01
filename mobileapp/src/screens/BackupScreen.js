@@ -90,20 +90,22 @@ export default function BackupScreen() {
   return (
     <ScreenShell>
       <View style={styles.container}>
-        <Text style={styles.title}>Backup</Text>
-        <Text style={styles.desc}>
-          Export all sales as a compressed JSON file. Images are resized to reduce file size and can be restored later.
-        </Text>
+        <View style={styles.card}>
+          <Text style={styles.title}>Backup</Text>
+          <Text style={styles.desc}>
+            Export all sales as a compressed JSON file. Images are resized to reduce file size and can be restored later.
+          </Text>
 
-        <Pressable style={[styles.btn, exporting && styles.btnDisabled]} onPress={exportBackup} disabled={exporting}>
-          {exporting ? <ActivityIndicator color="#fff" /> : <Text style={styles.btnText}>Save Backup to Device</Text>}
-        </Pressable>
+          <Pressable style={[styles.btn, exporting && styles.btnDisabled]} onPress={exportBackup} disabled={exporting}>
+            {exporting ? <ActivityIndicator color="#fff" /> : <Text style={styles.btnText}>Save Backup to Device</Text>}
+          </Pressable>
 
-        <Pressable style={[styles.secondaryBtn, importing && styles.btnDisabled]} onPress={importBackup} disabled={importing}>
-          {importing ? <ActivityIndicator color={colors.accent} /> : <Text style={styles.secondaryText}>Import Backup</Text>}
-        </Pressable>
+          <Pressable style={[styles.secondaryBtn, importing && styles.btnDisabled]} onPress={importBackup} disabled={importing}>
+            {importing ? <ActivityIndicator color={colors.accent} /> : <Text style={styles.secondaryText}>Import Backup</Text>}
+          </Pressable>
 
-        <Text style={styles.note}>Images are compressed to a max width of 1200px at 60% quality before export.</Text>
+          <Text style={styles.note}>Images are compressed to a max width of 1200px at 60% quality before export.</Text>
+        </View>
       </View>
     </ScreenShell>
   );
@@ -114,32 +116,52 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
     paddingHorizontal: 18,
-    paddingTop: 65,
+    paddingTop: 60,
+    paddingBottom: 20,
+  },
+  card: {
+    backgroundColor: colors.backgroundCard,
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: colors.border,
+    paddingHorizontal: 20,
+    paddingVertical: 22,
+    shadowColor: colors.shadow,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.12,
+    shadowRadius: 16,
+    elevation: 4,
   },
   title: {
-    fontSize: 24,
-    fontWeight: '700',
-    marginBottom: 12,
+    fontSize: 28,
+    fontWeight: '800',
+    marginBottom: 8,
     color: colors.text,
   },
   desc: {
     color: colors.muted,
-    fontSize: 16,
+    fontSize: 15,
     lineHeight: 22,
-    marginBottom: 24,
+    marginBottom: 22,
   },
   btn: {
     backgroundColor: colors.accent,
     paddingVertical: 14,
-    borderRadius: 8,
+    borderRadius: 12,
     alignItems: 'center',
     marginBottom: 12,
+    shadowColor: colors.shadow,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.22,
+    shadowRadius: 10,
+    elevation: 3,
   },
   secondaryBtn: {
     borderWidth: 1,
     borderColor: colors.inputBorder,
+    backgroundColor: colors.inputBackground,
     paddingVertical: 14,
-    borderRadius: 8,
+    borderRadius: 12,
     alignItems: 'center',
     marginBottom: 12,
   },
@@ -149,12 +171,12 @@ const styles = StyleSheet.create({
   btnText: {
     color: '#fff',
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '700',
   },
   secondaryText: {
     color: colors.accent,
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '700',
   },
   note: {
     color: colors.muted,

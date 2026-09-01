@@ -27,16 +27,16 @@ export default function DateNavigator({ selectedDate, onPreviousDay, onNextDay, 
   return (
     <View style={styles.row}>
       <Pressable style={styles.navBtn} onPress={onPreviousDay}>
-        <MaterialIcons name="arrow-back" size={24} color="#fff" />
+        <MaterialIcons name="arrow-back" size={22} color="#fff" />
       </Pressable>
 
       <View style={styles.dateBox}>
-        <MaterialIcons name="calendar-today" size={18} color={colors.text} />
+        <MaterialIcons name="calendar-today" size={18} color={colors.primary} />
         <Text style={styles.dateInputText}>{formatShort(selectedDate)}</Text>
       </View>
 
       <Pressable style={styles.navBtn} onPress={onNextDay}>
-        <MaterialIcons name="arrow-forward" size={24} color="#fff" />
+        <MaterialIcons name="arrow-forward" size={22} color="#fff" />
       </Pressable>
 
       <Pressable style={styles.addBtn} onPress={onAddPress}>
@@ -52,48 +52,57 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 10,
-    marginBottom: 20,
-    paddingHorizontal: 16,
+    paddingHorizontal: 4,
   },
   navBtn: {
-    width: 44,
-    height: 44,
-    borderRadius: 10,
-    backgroundColor: '#000000',
+    width: 42,
+    height: 42,
+    borderRadius: 12,
+    backgroundColor: colors.accent,
     alignItems: 'center',
     justifyContent: 'center',
+    shadowColor: colors.shadow,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.8,
+    shadowRadius: 10,
+    elevation: 2,
   },
   dateBox: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    minWidth: 130,
-    height: 44,
-    borderWidth: 1.5,
-    borderColor: '#d0d0d0',
-    borderRadius: 10,
-    backgroundColor: '#fafafa',
+    minWidth: 138,
+    height: 42,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: 12,
+    backgroundColor: colors.inputBackground,
     paddingHorizontal: 12,
     gap: 8,
   },
   dateInputText: {
     color: colors.text,
-    fontSize: 15,
-    fontWeight: '600',
+    fontSize: 14,
+    fontWeight: '700',
   },
   addBtn: {
-    width: 44,
-    height: 44,
-    borderRadius: 10,
-    backgroundColor: '#000000',
+    width: 42,
+    height: 42,
+    borderRadius: 12,
+    backgroundColor: colors.text,
     alignItems: 'center',
     justifyContent: 'center',
-    marginLeft: 6,
+    marginLeft: 4,
+    shadowColor: colors.shadow,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.8,
+    shadowRadius: 10,
+    elevation: 2,
   },
   addText: {
     color: '#fff',
     fontWeight: '700',
-    fontSize: 24,
+    fontSize: 26,
     lineHeight: 28,
   },
 });

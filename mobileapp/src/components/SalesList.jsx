@@ -12,7 +12,7 @@ export default function SalesList({ sales, isLoading, onEdit, onDelete }) {
     return (
       <View style={styles.emptyState}>
         <Text style={styles.emptyText}>No sales for this date yet.</Text>
-        <Text style={styles.emptySubtext}>Click + to create your first entry!</Text>
+        <Text style={styles.emptySubtext}>Tap the + button to add your first entry.</Text>
       </View>
     );
   }
@@ -32,27 +32,37 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 24,
     fontSize: 16,
+    fontWeight: '600',
   },
   emptyState: {
-    paddingVertical: 48,
+    paddingVertical: 40,
+    paddingHorizontal: 20,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: colors.backgroundCard,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: colors.border,
+    shadowColor: colors.shadow,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.8,
+    shadowRadius: 10,
+    elevation: 2,
   },
   emptyText: {
-    color: '#999999',
+    color: colors.text,
     fontSize: 18,
-    fontWeight: '500',
+    fontWeight: '700',
     textAlign: 'center',
   },
   emptySubtext: {
-    color: '#aaaaaa',
-    fontSize: 16,
-    marginTop: 10,
+    color: colors.muted,
+    fontSize: 14,
+    marginTop: 8,
     textAlign: 'center',
     lineHeight: 22,
   },
   list: {
-    marginTop: 12,
-    gap: 8,
+    gap: 12,
   },
 });

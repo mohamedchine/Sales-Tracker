@@ -26,7 +26,7 @@ export default function SaleCard({ sale, onEdit, onDelete }) {
 
       <View style={styles.details}>
         <View style={styles.header}>
-          <Text style={styles.name}>{sale.name}</Text>
+          <Text style={styles.name} numberOfLines={2}>{sale.name}</Text>
           <View style={styles.actions}>
             <Pressable style={styles.iconBtn} onPress={() => onEdit(sale)}>
               <Text style={styles.iconText}>✏️</Text>
@@ -48,15 +48,22 @@ const styles = StyleSheet.create({
   card: {
     flexDirection: 'row',
     paddingVertical: 12,
-    paddingHorizontal: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e5e5e5',
+    paddingHorizontal: 12,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: colors.backgroundCard,
     alignItems: 'center',
+    shadowColor: colors.shadow,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.8,
+    shadowRadius: 10,
+    elevation: 2,
   },
   imageWrap: {
-    width: 74,
-    height: 74,
-    borderRadius: 8,
+    width: 78,
+    height: 78,
+    borderRadius: 14,
     overflow: 'hidden',
     backgroundColor: colors.borderLight,
     justifyContent: 'center',
@@ -69,6 +76,7 @@ const styles = StyleSheet.create({
   placeholder: {
     color: colors.muted,
     fontSize: 11,
+    fontWeight: '600',
   },
   details: {
     flex: 1,
@@ -84,35 +92,36 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: colors.text,
     flex: 1,
+    marginRight: 8,
   },
   actions: {
     flexDirection: 'row',
-    marginLeft: 8,
   },
   iconBtn: {
     width: 32,
     height: 32,
-    borderRadius: 8,
-    backgroundColor: colors.primary,
+    borderRadius: 10,
+    backgroundColor: colors.primarySoft,
     alignItems: 'center',
     justifyContent: 'center',
     marginLeft: 6,
   },
   deleteBtn: {
-    backgroundColor: colors.danger,
+    backgroundColor: colors.dangerSoft,
   },
   iconText: {
     fontSize: 14,
   },
   price: {
-    marginTop: 4,
+    marginTop: 6,
     fontSize: 18,
-    fontWeight: '700',
+    fontWeight: '800',
     color: colors.text,
   },
   time: {
     marginTop: 4,
     color: colors.muted,
     fontSize: 13,
+    fontWeight: '600',
   },
 });

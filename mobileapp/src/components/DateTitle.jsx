@@ -19,7 +19,7 @@ export default function DateTitle({ selectedDate }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.weekday}>{weekday},</Text>
+      <Text style={styles.weekday}>{weekday}</Text>
       <Text style={styles.date}>{monthDay}</Text>
     </View>
   );
@@ -29,18 +29,21 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 20,
-    paddingHorizontal: 16,
+    marginBottom: 14,
+    paddingHorizontal: 12,
   },
   weekday: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: colors.text,
+    fontSize: 12,
+    fontWeight: '700',
+    color: colors.primary,
+    letterSpacing: 1.6,
+    textTransform: 'uppercase',
   },
   date: {
-    fontSize: 20,
-    fontWeight: '600',
+    fontSize: 24,
+    fontWeight: '700',
     color: colors.text,
-    marginTop: 2,
+    marginTop: 4,
+    textAlign: 'center',
   },
 });

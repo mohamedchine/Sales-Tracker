@@ -16,7 +16,7 @@ export default function Total({ sales }) {
 
   return (
     <View style={styles.total}>
-      <Text style={styles.label}>Total:</Text>
+      <Text style={styles.label}>Total</Text>
       <Text style={styles.amount}>{formatTotal(total)}</Text>
     </View>
   );
@@ -26,19 +26,21 @@ const styles = StyleSheet.create({
   total: {
     flexDirection: 'row',
     alignItems: 'baseline',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
     width: '100%',
   },
 
   label: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#666',
+    fontSize: 14,
+    fontWeight: '700',
+    color: colors.muted,
+    letterSpacing: 0.8,
+    textTransform: 'uppercase',
   },
 
   amount: {
-    fontSize: 16,
-    fontWeight: '700',
+    fontSize: 22,
+    fontWeight: '800',
     color: colors.text,
   },
 });

@@ -76,23 +76,17 @@ const handleSave = async (payload) => {
   return (
     <ScreenShell>
       <View style={styles.container}>
-        {/* Date Title */}
-        <View style={styles.titleSection}>
+        <View style={styles.headerCard}>
           <DateTitle selectedDate={selectedDate} />
+          <DateNavigator
+            selectedDate={selectedDate}
+            onPreviousDay={() => moveSelectedDate(-1)}
+            onNextDay={() => moveSelectedDate(1)}
+            onAddPress={handleOpenAdd}
+          />
         </View>
 
-        {/* Date Navigation Row */}
-        <DateNavigator
-          selectedDate={selectedDate}
-          onPreviousDay={() => moveSelectedDate(-1)}
-          onNextDay={() => moveSelectedDate(1)}
-          onAddPress={handleOpenAdd}
-        />
-
-        <View style={styles.divider} />
-
-        {/* Sales Content */}
-        <ScrollView 
+        <ScrollView
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={true}
           indicatorStyle="black"
@@ -106,7 +100,6 @@ const handleSave = async (payload) => {
           />
         </ScrollView>
 
-        {/* Total Section */}
         <View style={styles.totalWrapper}>
           <Total sales={filteredSales} />
         </View>
@@ -130,27 +123,43 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
-  },
-  titleSection: {
-    paddingTop: 48,
     paddingHorizontal: 16,
+    paddingTop: 48,
+    paddingBottom: 8,
+  },
+  headerCard: {
+    backgroundColor: colors.backgroundCard,
+    borderRadius: 24,
+    paddingTop: 18,
+    paddingBottom: 14,
+    paddingHorizontal: 12,
+    borderWidth: 1,
+    borderColor: colors.border,
+    shadowColor: colors.shadow,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 1,
+    shadowRadius: 16,
+    elevation: 4,
+    marginBottom: 16,
   },
   scrollContent: {
     flexGrow: 1,
     minHeight: 120,
-    paddingHorizontal: 16,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: colors.border,
-    width: '100%',
- 
+    paddingTop: 4,
+    paddingBottom: 8,
   },
   totalWrapper: {
+    marginTop: 10,
+    backgroundColor: colors.backgroundCard,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: colors.border,
     paddingHorizontal: 16,
-    paddingTop: 12,
-    paddingBottom: 12,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
+    paddingVertical: 14,
+    shadowColor: colors.shadow,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.8,
+    shadowRadius: 10,
+    elevation: 2,
   },
 });
