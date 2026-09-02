@@ -68,6 +68,28 @@ export async function buildCompressedSalesExportPayload(sales, maxImageWidth = 1
   return { sales: exportedSales };
 }
 
+export async function buildDailySalesExportPayload(sales, date) {
+  const exportedSales = [];
+
+  for (const sale of sales) {
+    exportedSales.push({
+      _id: sale._id,
+      name: sale.name,
+      price: sale.price,
+      imageBase64: sale.imageUri ? await imageToBase64(sale.imageUri) : null,
+      createdAt: sale.createdAt,
+      updatedAt: sale.updatedAt || sale.createdAt,
+    });
+  }
+
+  return {
+    type: 'daily_sales',
+    version: 1,
+    date,
+    sales: exportedSales,
+  };
+}
+
 export async function parseSalesImportPayload(data) {
   const rawSales = Array.isArray(data?.sales) ? data.sales : [];
   const sales = [];

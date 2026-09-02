@@ -23,17 +23,17 @@ const formatLong = (dateString) => {
   });
 };
 
-export default function DateNavigator({ selectedDate, onPreviousDay, onNextDay, onAddPress }) {
+export default function DateNavigator({ selectedDate, onPreviousDay, onNextDay, onAddPress, onDatePress }) {
   return (
     <View style={styles.row}>
       <Pressable style={styles.navBtn} onPress={onPreviousDay}>
         <MaterialIcons name="arrow-back" size={22} color="#fff" />
       </Pressable>
 
-      <View style={styles.dateBox}>
+      <Pressable style={styles.dateBox} onPress={onDatePress} accessibilityLabel="Select date">
         <MaterialIcons name="calendar-today" size={18} color={colors.primary} />
         <Text style={styles.dateInputText}>{formatShort(selectedDate)}</Text>
-      </View>
+      </Pressable>
 
       <Pressable style={styles.navBtn} onPress={onNextDay}>
         <MaterialIcons name="arrow-forward" size={22} color="#fff" />
@@ -68,6 +68,8 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   dateBox: {
+    flex: 1,
+    minWidth: 0,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',

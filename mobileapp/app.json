@@ -17,6 +17,8 @@
         "WRITE_EXTERNAL_STORAGE"
       ]
     },
-    "plugins": []
+    "plugins": [
+      "@react-native-community/datetimepicker"
+    ]
   }
 }
