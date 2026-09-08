@@ -26,8 +26,8 @@ const formatLong = (dateString) => {
 export default function DateNavigator({ selectedDate, onPreviousDay, onNextDay, onAddPress, onDatePress }) {
   return (
     <View style={styles.row}>
-      <Pressable style={styles.navBtn} onPress={onPreviousDay}>
-        <MaterialIcons name="arrow-back" size={22} color="#fff" />
+      <Pressable style={styles.navBtn} onPress={onNextDay}>
+        <MaterialIcons name="arrow-forward" size={22} color="#fff" />
       </Pressable>
 
       <Pressable style={styles.dateBox} onPress={onDatePress} accessibilityLabel="اختيار التاريخ">
@@ -35,8 +35,8 @@ export default function DateNavigator({ selectedDate, onPreviousDay, onNextDay, 
         <Text style={styles.dateInputText}>{formatShort(selectedDate)}</Text>
       </Pressable>
 
-      <Pressable style={styles.navBtn} onPress={onNextDay}>
-        <MaterialIcons name="arrow-forward" size={22} color="#fff" />
+      <Pressable style={styles.navBtn} onPress={onPreviousDay}>
+        <MaterialIcons name="arrow-back" size={22} color="#fff" />
       </Pressable>
 
       <Pressable style={styles.addBtn} onPress={onAddPress}>
