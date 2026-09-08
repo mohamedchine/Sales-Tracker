@@ -45,13 +45,13 @@ const useSalesStore = create((set, get) => ({
     await get().persistSales(sales);
   },
 
-  createSale: async ({ name, price, imageUri }) => {
+  createSale: async ({ name, price, imageUri, date }) => {
     const sale = {
       _id: generateId('sale'),
       name: name.trim(),
       price: Number(price),
       imageUri: imageUri || null,
-      createdAt: new Date().toISOString(),
+      createdAt: date ? `${date}T12:00:00` : new Date().toISOString(),
     };
 
     const sales = [sale, ...get().sales];
@@ -106,6 +106,33 @@ const useSalesStore = create((set, get) => ({
     const sales = await parseSalesImportPayload(payload);
     await get().setSales(sales);
     return sales;
+  },
+
+  importDailySales: async (payload, replaceExisting) => {
+    const parsedSales = await parseSalesImportPayload(payload);
+    const importedSales = parsedSales.map((sale) => ({
+      ...sale,
+      createdAt: `${payload.date}T12:00:00`,
+      updatedAt: `${payload.date}T12:00:00`,
+    }));
+    const date = new Date(`${payload.date}T12:00:00`);
+    const sameDate = (sale) => new Date(sale.createdAt).toDateString() === date.toDateString();
+    const currentSales = get().sales;
+    const retainedSales = replaceExisting ? currentSales.filter((sale) => !sameDate(sale)) : currentSales;
+
+    if (replaceExisting) {
+      await Promise.all(
+        currentSales
+          .filter(sameDate)
+          .filter((sale) => sale.imageUri)
+          .map((sale) => deleteImage(sale.imageUri).catch(() => {}))
+      );
+    }
+
+    const sales = [...importedSales, ...retainedSales];
+    set({ sales });
+    await get().persistSales(sales);
+    return importedSales;
   },
 }));
 

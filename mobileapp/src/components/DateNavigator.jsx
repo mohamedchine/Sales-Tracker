@@ -10,12 +10,12 @@ const parseDate = (dateString) => {
 
 const formatShort = (dateString) => {
   const date = parseDate(dateString);
-  return date.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' });
+  return date.toLocaleDateString('fr-TN', { month: '2-digit', day: '2-digit', year: 'numeric' });
 };
 
 const formatLong = (dateString) => {
   const date = parseDate(dateString);
-  return date.toLocaleDateString('en-US', {
+  return date.toLocaleDateString('ar-TN-u-nu-latn', {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
@@ -30,7 +30,7 @@ export default function DateNavigator({ selectedDate, onPreviousDay, onNextDay, 
         <MaterialIcons name="arrow-back" size={22} color="#fff" />
       </Pressable>
 
-      <Pressable style={styles.dateBox} onPress={onDatePress} accessibilityLabel="Select date">
+      <Pressable style={styles.dateBox} onPress={onDatePress} accessibilityLabel="اختيار التاريخ">
         <MaterialIcons name="calendar-today" size={18} color={colors.primary} />
         <Text style={styles.dateInputText}>{formatShort(selectedDate)}</Text>
       </Pressable>

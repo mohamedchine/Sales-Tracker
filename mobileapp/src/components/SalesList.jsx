@@ -3,16 +3,16 @@ import { View, Text, StyleSheet } from 'react-native';
 import SaleCard from './SaleCard';
 import colors from '../theme/colors';
 
-export default function SalesList({ sales, isLoading, onEdit, onDelete }) {
+export default function SalesList({ sales, isLoading, onEdit, onDelete, readOnly = false }) {
   if (isLoading) {
-    return <Text style={styles.loading}>Loading sales...</Text>;
+    return <Text style={styles.loading}>جار تحميل المبيعات...</Text>;
   }
 
   if (!sales || sales.length === 0) {
     return (
       <View style={styles.emptyState}>
-        <Text style={styles.emptyText}>No sales for this date yet.</Text>
-        <Text style={styles.emptySubtext}>Tap the + button to add your first entry.</Text>
+        <Text style={styles.emptyText}>لا توجد مبيعات لهذا التاريخ بعد.</Text>
+        <Text style={styles.emptySubtext}>اضغط على زر + لإضافة أول عملية بيع.</Text>
       </View>
     );
   }
@@ -20,7 +20,7 @@ export default function SalesList({ sales, isLoading, onEdit, onDelete }) {
   return (
     <View style={styles.list}>
       {sales.map((sale) => (
-        <SaleCard key={sale._id} sale={sale} onEdit={onEdit} onDelete={onDelete} />
+        <SaleCard key={sale._id} sale={sale} onEdit={onEdit} onDelete={onDelete} readOnly={readOnly} />
       ))}
     </View>
   );

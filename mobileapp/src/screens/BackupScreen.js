@@ -21,14 +21,33 @@ export default function BackupScreen() {
   const [exporting, setExporting] = useState(false);
   const [importing, setImporting] = useState(false);
 
-  const fileName = `sales-backup-${new Date().toISOString().slice(0, 10)}.json`;
+  const getSaleDate = (sale) => {
+    const date = new Date(sale.createdAt);
+    if (Number.isNaN(date.getTime())) return null;
 
-  const saveToDeviceAndroid = async (jsonContent) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  const getBackupFileName = () => {
+    const dates = sales.map(getSaleDate).filter(Boolean).sort();
+    if (dates.length === 0) return null;
+
+    const startDate = dates[0];
+    const endDate = dates[dates.length - 1];
+    return startDate === endDate
+      ? `PricesTracker_${startDate}.ptbackup`
+      : `PricesTracker_${startDate}_to_${endDate}.ptbackup`;
+  };
+
+  const saveToDeviceAndroid = async (jsonContent, fileName, showSuccess = true) => {
     try {
       const permissions = await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync();
       if (!permissions.granted) {
-        Alert.alert('Permission denied', 'Storage permission is required to save the backup.');
-        return;
+        Alert.alert('تم رفض الإذن', 'يلزم إذن التخزين لحفظ النسخة الاحتياطية.');
+        return false;
       }
 
       const uri = await FileSystem.StorageAccessFramework.createFileAsync(
@@ -38,33 +57,53 @@ export default function BackupScreen() {
       );
 
       await FileSystem.writeAsStringAsync(uri, jsonContent, { encoding: 'utf8' });
-      Alert.alert('Backup saved', `Backup file saved as:\n${fileName}`, [{ text: 'OK' }]);
+      if (showSuccess) {
+        Alert.alert('تم حفظ النسخة الاحتياطية', `تم حفظ ملف النسخة الاحتياطية باسم:\n${fileName}`, [{ text: 'حسنا' }]);
+      }
+      return true;
     } catch (err) {
       if (err.message?.includes('User cancelled')) return;
       throw err;
     }
   };
 
+  const saveBackupToDevice = async ({ showEmptyMessage = true, showSuccess = true } = {}) => {
+    if (sales.length === 0) {
+      if (showEmptyMessage) Alert.alert('لا توجد مبيعات لنسخها احتياطيا.');
+      return true;
+    }
+
+    const fileName = getBackupFileName();
+    if (!fileName) {
+      throw new Error('تعذر تحديد تواريخ المبيعات لهذه النسخة الاحتياطية.');
+    }
+
+    const payload = await buildCompressedSalesExportPayload(sales, 1200, 0.6);
+    const json = JSON.stringify(payload, null, 2);
+
+    if (Platform.OS === 'android') {
+      return saveToDeviceAndroid(json, fileName, showSuccess);
+    }
+
+    if (showSuccess) {
+      Alert.alert('النسخة الاحتياطية جاهزة', 'هذا التطبيق مهيأ لحفظ الملفات على أجهزة أندرويد.');
+    }
+    return true;
+  };
+
   const exportBackup = async () => {
     try {
       setExporting(true);
-      const payload = await buildCompressedSalesExportPayload(sales, 1200, 0.6);
-      const json = JSON.stringify(payload, null, 2);
-
-      if (Platform.OS === 'android') {
-        await saveToDeviceAndroid(json);
-      } else {
-        Alert.alert('Backup ready', 'This app is configured for Android device save-to-file export.');
-      }
+      await saveBackupToDevice();
     } catch (err) {
-      Alert.alert('Export failed', err.message || 'Could not export backup.');
+      Alert.alert('فشل التصدير', err.message || 'تعذر تصدير النسخة الاحتياطية.');
       console.error('Backup export error:', err);
     } finally {
       setExporting(false);
     }
   };
 
-  const importBackup = async () => {
+  const continueImportBackup = async () => {
     try {
       setImporting(true);
       const result = await DocumentPicker.getDocumentAsync({
@@ -77,34 +116,48 @@ export default function BackupScreen() {
       const response = await fetch(result.assets[0].uri);
       const text = await response.text();
       const data = JSON.parse(text);
+      if (!Array.isArray(data?.sales)) {
+        throw new Error('هذا ليس ملف نسخة احتياطية صالحا من متتبع الأسعار.');
+      }
       const salesToImport = await parseSalesImportPayload(data);
       await setSales(salesToImport);
-      Alert.alert('Import complete', 'Sales backup imported successfully.');
+      Alert.alert('اكتمل الاستيراد', 'تم استيراد نسخة المبيعات الاحتياطية بنجاح.');
     } catch (err) {
-      Alert.alert('Import failed', err.message || 'Could not import backup.');
+      Alert.alert('فشل الاستيراد', err.message || 'تعذر استيراد النسخة الاحتياطية.');
     } finally {
       setImporting(false);
     }
+  };
+
+  const importBackup = () => {
+    Alert.alert(
+      'استبدال بيانات المبيعات الحالية؟',
+      'سيؤدي استيراد نسخة احتياطية إلى استبدال وحذف جميع بيانات المبيعات الحالية على هذا الجهاز. احفظ نسخة احتياطية يدويا أولا إذا أردت الاحتفاظ بها.',
+      [
+        { text: 'إلغاء', style: 'cancel' },
+        { text: 'متابعة', onPress: continueImportBackup },
+      ]
+    );
   };
 
   return (
     <ScreenShell>
       <View style={styles.container}>
         <View style={styles.card}>
-          <Text style={styles.title}>Backup</Text>
+          <Text style={styles.title}>النسخ الاحتياطي</Text>
           <Text style={styles.desc}>
-            Export all sales as a compressed JSON file. Images are resized to reduce file size and can be restored later.
+            صدّر جميع المبيعات في ملف JSON مضغوط. تصغّر الصور لتقليل حجم الملف ويمكن استعادتها لاحقا.
           </Text>
 
           <Pressable style={[styles.btn, exporting && styles.btnDisabled]} onPress={exportBackup} disabled={exporting}>
-            {exporting ? <ActivityIndicator color="#fff" /> : <Text style={styles.btnText}>Save Backup to Device</Text>}
+            {exporting ? <ActivityIndicator color="#fff" /> : <Text style={styles.btnText}>حفظ النسخة الاحتياطية على الجهاز</Text>}
           </Pressable>
 
           <Pressable style={[styles.secondaryBtn, importing && styles.btnDisabled]} onPress={importBackup} disabled={importing}>
-            {importing ? <ActivityIndicator color={colors.accent} /> : <Text style={styles.secondaryText}>Import Backup</Text>}
+            {importing ? <ActivityIndicator color={colors.accent} /> : <Text style={styles.secondaryText}>استيراد نسخة احتياطية</Text>}
           </Pressable>
 
-          <Text style={styles.note}>Images are compressed to a max width of 1200px at 60% quality before export.</Text>
+          <Text style={styles.note}>تُضغط الصور إلى عرض أقصى 1200 بكسل بجودة 60% قبل التصدير.</Text>
         </View>
       </View>
     </ScreenShell>

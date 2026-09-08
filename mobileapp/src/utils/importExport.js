@@ -90,6 +90,26 @@ export async function buildDailySalesExportPayload(sales, date) {
   };
 }
 
+export function validateDailySalesPayload(data) {
+  if (!data || data.type !== 'daily_sales') {
+    throw new Error('هذا ليس ملف مبيعات يومية صالحا من متتبع الأسعار.');
+  }
+  if (data.version !== 1) {
+    throw new Error('إصدار ملف المبيعات اليومية هذا غير مدعوم.');
+  }
+  const parsedDate = new Date(`${data.date}T12:00:00`);
+  const normalizedDate = !Number.isNaN(parsedDate.getTime())
+    ? `${parsedDate.getFullYear()}-${String(parsedDate.getMonth() + 1).padStart(2, '0')}-${String(parsedDate.getDate()).padStart(2, '0')}`
+    : null;
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(data.date) || normalizedDate !== data.date) {
+    throw new Error('يحتوي ملف المبيعات اليومية على تاريخ غير صالح.');
+  }
+  if (!Array.isArray(data.sales)) {
+    throw new Error('يحتوي ملف المبيعات اليومية على بيانات مبيعات غير صالحة.');
+  }
+  return data;
+}
+
 export async function parseSalesImportPayload(data) {
   const rawSales = Array.isArray(data?.sales) ? data.sales : [];
   const sales = [];

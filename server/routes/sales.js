@@ -34,17 +34,34 @@ router.get('/', async (req, res) => {
 // POST create a new sale
 router.post('/', async (req, res) => {
   try {
-    const { name, price, image } = req.body;
+    const { name, price, image, date } = req.body;
 
     if (!name || price === undefined) {
       return res.status(400).json({ error: 'Name and price are required' });
+    }
+
+    let createdAt = new Date();
+    if (date !== undefined) {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+        return res.status(400).json({ error: 'Date must use YYYY-MM-DD format' });
+      }
+
+      const [year, month, day] = date.split('-').map(Number);
+      createdAt = new Date(year, month - 1, day, 12, 0, 0, 0);
+      if (
+        createdAt.getFullYear() !== year ||
+        createdAt.getMonth() !== month - 1 ||
+        createdAt.getDate() !== day
+      ) {
+        return res.status(400).json({ error: 'Date is invalid' });
+      }
     }
 
     const sale = new Sale({
       name,
       price: parseFloat(price),
       image: image || null,
-      createdAt: new Date(),
+      createdAt,
     });
 
     await sale.save();

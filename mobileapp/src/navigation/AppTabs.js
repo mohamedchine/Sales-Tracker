@@ -10,8 +10,8 @@ import BackupScreen from '../screens/BackupScreen';
 const Tab = createBottomTabNavigator();
 
 const TAB_CONFIG = [
-  { name: 'Sales', component: SalesScreen, icon: 'receipt-long' },
-  { name: 'Backup', component: BackupScreen, icon: 'save-alt' },
+  { name: 'Sales', label: 'المبيعات', component: SalesScreen, icon: 'receipt-long' },
+  { name: 'Backup', label: 'النسخ الاحتياطي', component: BackupScreen, icon: 'save-alt' },
 ];
 
 export default function AppTabs() {
@@ -25,6 +25,7 @@ export default function AppTabs() {
         return {
           headerShown: false,
           tabBarShowLabel: false,
+          tabBarAccessibilityLabel: config?.label,
           tabBarIcon: ({ focused }) => (
             <View style={[styles.tabItem, focused && styles.tabItemActive]}>
               <MaterialIcons

@@ -9,8 +9,8 @@ const parseDate = (dateString) => {
 
 const formatDateTitle = (dateString) => {
   const date = parseDate(dateString);
-  const weekday = date.toLocaleDateString('en-US', { weekday: 'long' });
-  const monthDay = date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  const weekday = date.toLocaleDateString('ar-TN', { weekday: 'long' });
+  const monthDay = date.toLocaleDateString('ar-TN-u-nu-latn', { month: 'long', day: 'numeric', year: 'numeric' });
   return { weekday, monthDay };
 };
 

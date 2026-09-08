@@ -98,7 +98,7 @@ function App() {
         setSales(sales.map(sale => sale._id === editingSale._id ? updatedSale : sale));
       } else {
         // Create new sale
-        const newSale = await createSale(formData);
+        const newSale = await createSale({ ...formData, date: selectedDate });
         setSales([newSale, ...sales]);
       }
       setIsModalOpen(false);

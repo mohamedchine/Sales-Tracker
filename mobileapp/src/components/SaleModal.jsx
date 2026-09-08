@@ -55,7 +55,7 @@ export default function SaleModal({ visible, sale, onSave, onCancel, isLoading }
             setRemoveImage(false);
             setShowImageSheet(false);
           },
-          () => Alert.alert('Image Processing Error', 'Failed to process the image. Please try again.'),
+          () => Alert.alert('خطأ في معالجة الصورة', 'تعذرت معالجة الصورة. يرجى المحاولة مرة أخرى.'),
           imageOptimizationOptions,
           imageUri
         );
@@ -68,7 +68,7 @@ export default function SaleModal({ visible, sale, onSave, onCancel, isLoading }
   const pickFromGallery = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') {
-      Alert.alert('Permission needed', 'Allow photo access to add sale images.');
+      Alert.alert('الإذن مطلوب', 'اسمح بالوصول إلى الصور لإضافة صور المبيعات.');
       return;
     }
     const result = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images'], quality: 0.8 });
@@ -78,7 +78,7 @@ export default function SaleModal({ visible, sale, onSave, onCancel, isLoading }
   const pickFromCamera = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== 'granted') {
-      Alert.alert('Permission needed', 'Allow camera access to take sale photos.');
+      Alert.alert('الإذن مطلوب', 'اسمح بالوصول إلى الكاميرا لالتقاط صور المبيعات.');
       return;
     }
     const result = await ImagePicker.launchCameraAsync({ mediaTypes: ['images'], quality: 0.8 });
@@ -87,12 +87,12 @@ export default function SaleModal({ visible, sale, onSave, onCancel, isLoading }
 
   const handleSubmit = () => {
     if (!name.trim()) {
-      Alert.alert('Error', 'Product name is required');
+      Alert.alert('خطأ', 'اسم المنتج مطلوب');
       return;
     }
 
     if (price === '' || Number.isNaN(Number(price))) {
-      Alert.alert('Error', 'Price must be a valid number');
+      Alert.alert('خطأ', 'يجب أن يكون السعر رقما صالحا');
       return;
     }
 
@@ -114,40 +114,40 @@ export default function SaleModal({ visible, sale, onSave, onCancel, isLoading }
             <Text style={styles.closeText}>×</Text>
           </Pressable>
 
-          <Text style={styles.title}>{sale ? 'Edit Sale' : 'Add Sale'}</Text>
+          <Text style={styles.title}>{sale ? 'تعديل عملية بيع' : 'إضافة عملية بيع'}</Text>
 
-          <Text style={styles.label}>Product Name</Text>
+          <Text style={styles.label}>اسم المنتج</Text>
           <TextInput
             style={styles.input}
             value={name}
             onChangeText={setName}
-            placeholder="e.g. iPhone 15"
+            placeholder="مثال: قميص"
             placeholderTextColor={colors.muted}
             editable={!isLoading}
           />
 
-          <Text style={styles.label}>Price</Text>
+          <Text style={styles.label}>السعر</Text>
           <TextInput
             style={styles.input}
             value={price}
             onChangeText={setPrice}
             keyboardType="decimal-pad"
-            placeholder="e.g. 799.99"
+            placeholder="مثال: 35 دينارا"
             placeholderTextColor={colors.muted}
             editable={!isLoading}
           />
 
-          <Text style={styles.label}>Image</Text>
+          <Text style={styles.label}>الصورة</Text>
 
           {isOptimizing ? (
             <View style={styles.loadingContainer}>
-              <Text style={styles.loadingText}>Optimizing image...</Text>
+              <Text style={styles.loadingText}>جار تحسين الصورة...</Text>
             </View>
           ) : null}
 
           {!previewUri && !isOptimizing ? (
             <Pressable style={styles.uploadBtn} onPress={() => setShowImageSheet(true)}>
-              <Text style={styles.uploadText}>{sale && !removeImage ? 'Add image' : 'Upload image'}</Text>
+              <Text style={styles.uploadText}>{sale && !removeImage ? 'إضافة صورة' : 'رفع صورة'}</Text>
             </Pressable>
           ) : null}
 
@@ -158,7 +158,7 @@ export default function SaleModal({ visible, sale, onSave, onCancel, isLoading }
               </Pressable>
               <View style={styles.imageActions}>
                 <Pressable style={styles.smallBtn} onPress={() => setShowImageSheet(true)}>
-                  <Text style={styles.smallBtnText}>Replace</Text>
+                  <Text style={styles.smallBtnText}>استبدال</Text>
                 </Pressable>
                 <Pressable
                   style={[styles.smallBtn, styles.deleteBtn]}
@@ -170,7 +170,7 @@ export default function SaleModal({ visible, sale, onSave, onCancel, isLoading }
                     setRemoveImage(true);
                   }}
                 >
-                  <Text style={styles.smallBtnText}>Delete</Text>
+                  <Text style={styles.smallBtnText}>حذف</Text>
                 </Pressable>
               </View>
             </View>
@@ -178,10 +178,10 @@ export default function SaleModal({ visible, sale, onSave, onCancel, isLoading }
 
           <View style={styles.actions}>
             <Pressable style={styles.submitBtn} onPress={handleSubmit} disabled={isLoading}>
-              <Text style={styles.submitText}>{isLoading ? 'Saving...' : sale ? 'Save' : 'Add'}</Text>
+              <Text style={styles.submitText}>{isLoading ? 'جار الحفظ...' : sale ? 'حفظ' : 'إضافة'}</Text>
             </Pressable>
             <Pressable style={styles.cancelBtn} onPress={onCancel}>
-              <Text style={styles.cancelText}>Cancel</Text>
+              <Text style={styles.cancelText}>إلغاء</Text>
             </Pressable>
           </View>
         </Pressable>
@@ -194,7 +194,7 @@ export default function SaleModal({ visible, sale, onSave, onCancel, isLoading }
         onGallery={pickFromGallery}
       />
 
-      <ImageModal uri={modalUri} alt={name || 'sale image'} onClose={() => setModalUri(null)} />
+      <ImageModal uri={modalUri} alt={name || 'صورة عملية البيع'} onClose={() => setModalUri(null)} />
     </Modal>
   );
 }

@@ -99,10 +99,10 @@ export default function ImageSourceSheet({ visible, onClose, onCamera, onGallery
           ]}
         >
           <View style={styles.handle} />
-          <Text style={styles.title}>Add photo</Text>
+          <Text style={styles.title}>إضافة صورة</Text>
           <View style={styles.optionsRow}>
-            <SheetOption icon="photo-camera" label="Camera" onPress={handleCamera} />
-            <SheetOption icon="photo-library" label="Gallery" onPress={handleGallery} />
+            <SheetOption icon="photo-camera" label="الكاميرا" onPress={handleCamera} />
+            <SheetOption icon="photo-library" label="المعرض" onPress={handleGallery} />
           </View>
         </Animated.View>
       </View>

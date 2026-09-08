@@ -1,15 +1,49 @@
 {
   "expo": {
-    "name": "ASWAM Mobile",
-    "slug": "aswam-mobile",
-    "version": "1.0.0",
+    "name": "Sales Tracker",
+    "slug": "sales-tracker",
+    "version": "1.0.1",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
+    "extra": {
+      "eas": {
+        "projectId": "58d9e209-68a4-4dd0-bb76-8d660acc99d6"
+      }
+    },
     "assetBundlePatterns": [
       "**/*"
     ],
     "android": {
-      "package": "com.aswam.mobile",
+      "package": "com.zus32192.salestracker",
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "category": [
+            "DEFAULT",
+            "BROWSABLE"
+          ],
+          "data": [
+            {
+              "scheme": "content",
+              "mimeType": "application/vnd.pricestracker.sales"
+            },
+            {
+              "scheme": "content",
+              "mimeType": "application/octet-stream",
+              "pathPattern": ".*\\.ptsales"
+            },
+            {
+              "scheme": "file",
+              "mimeType": "application/vnd.pricestracker.sales"
+            },
+            {
+              "scheme": "file",
+              "mimeType": "application/octet-stream",
+              "pathPattern": ".*\\.ptsales"
+            }
+          ]
+        }
+      ],
       "permissions": [
         "CAMERA",
         "READ_MEDIA_IMAGES",
@@ -18,7 +52,11 @@
       ]
     },
     "plugins": [
-      "@react-native-community/datetimepicker"
+      "@react-native-community/datetimepicker",
+      "expo-asset",
+      "expo-font",
+      "expo-sharing",
+      "expo-status-bar"
     ]
   }
 }

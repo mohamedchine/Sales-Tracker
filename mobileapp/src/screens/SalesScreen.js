@@ -38,10 +38,10 @@ export default function SalesScreen() {
   }, [sales, selectedDate]);
 
   const confirmDelete = (id) => {
-    Alert.alert('Delete sale?', 'This cannot be undone.', [
-      { text: 'No', style: 'cancel' },
+    Alert.alert('حذف عملية البيع؟', 'لا يمكن التراجع عن هذا الإجراء.', [
+      { text: 'لا', style: 'cancel' },
       {
-        text: 'Yes',
+        text: 'نعم',
         style: 'destructive',
         onPress: async () => {
           await deleteSale(id);
@@ -62,30 +62,30 @@ export default function SalesScreen() {
 
   const handleShare = async () => {
     if (filteredSales.length === 0) {
-      Alert.alert('Nothing to share', 'No sales to share for this date.');
+      Alert.alert('لا توجد مبيعات للمشاركة', 'لا توجد مبيعات لمشاركتها في هذا التاريخ.');
       return;
     }
 
     try {
       setIsSharing(true);
       const payload = await buildDailySalesExportPayload(filteredSales, selectedDate);
-      const fileUri = `${FileSystem.cacheDirectory}sales-${selectedDate}.aswam`;
+      const fileUri = `${FileSystem.cacheDirectory}PricesTracker_Sales_${selectedDate}.ptsales`;
       await FileSystem.writeAsStringAsync(fileUri, JSON.stringify(payload, null, 2), {
         encoding: 'utf8',
       });
 
       if (!(await Sharing.isAvailableAsync())) {
-        Alert.alert('Sharing unavailable', 'Sharing is not available on this device.');
+        Alert.alert('المشاركة غير متاحة', 'المشاركة غير متاحة على هذا الجهاز.');
         return;
       }
 
       await Sharing.shareAsync(fileUri, {
-        mimeType: 'application/octet-stream',
-        dialogTitle: `Share sales for ${selectedDate}`,
+        mimeType: 'application/vnd.pricestracker.sales',
+        dialogTitle: `مشاركة مبيعات ${selectedDate}`,
         UTI: 'public.data',
       });
     } catch (error) {
-      Alert.alert('Share failed', error.message || 'Could not share sales.');
+      Alert.alert('فشلت المشاركة', error.message || 'تعذرت مشاركة المبيعات.');
       console.error('Daily sales share error:', error);
     } finally {
       setIsSharing(false);
@@ -109,7 +109,7 @@ const handleSave = async (payload) => {
     if (editingSale) {
       await updateSale(editingSale._id, payload);
     } else {
-      await createSale(payload);
+      await createSale({ ...payload, date: selectedDate });
     }
 
     // Close the modal after successful save
@@ -117,7 +117,7 @@ const handleSave = async (payload) => {
     setEditingSale(null);
   } catch (error) {
     console.error('Save error:', error);
-    Alert.alert('Error', 'Failed to save sale. Please try again.');
+    Alert.alert('خطأ', 'تعذر حفظ عملية البيع. يرجى المحاولة مرة أخرى.');
   } finally {
     setIsSaving(false);
   }
@@ -131,8 +131,8 @@ const handleSave = async (payload) => {
             style={[styles.shareBtn, isSharing && styles.disabledBtn]}
             onPress={handleShare}
             disabled={isSharing}
-            accessibilityLabel="Share today's sales"
-            accessibilityHint="Shares sales for the selected date"
+            accessibilityLabel="مشاركة مبيعات اليوم"
+            accessibilityHint="مشاركة مبيعات التاريخ المحدد"
           >
             <MaterialIcons name="share" size={20} color={colors.accent} />
           </Pressable>

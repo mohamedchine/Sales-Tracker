@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import colors from '../theme/colors';
+import formatCurrency from '../utils/formatCurrency';
 
 export default function Total({ sales }) {
   const total = (sales || []).reduce(
@@ -8,16 +9,10 @@ export default function Total({ sales }) {
     0
   );
 
-  const formatTotal = (value) =>
-    new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(value);
-
   return (
     <View style={styles.total}>
-      <Text style={styles.label}>Total</Text>
-      <Text style={styles.amount}>{formatTotal(total)}</Text>
+      <Text style={styles.label}>المجموع</Text>
+      <Text style={styles.amount}>{formatCurrency(total)}</Text>
     </View>
   );
 }

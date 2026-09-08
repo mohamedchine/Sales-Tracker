@@ -1,17 +1,12 @@
 import React from 'react';
 import { View, Text, Pressable, Image, StyleSheet } from 'react-native';
 import colors from '../theme/colors';
+import formatCurrency from '../utils/formatCurrency';
 
-export default function SaleCard({ sale, onEdit, onDelete }) {
-  const formatPrice = (price) =>
-    new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(price || 0);
-
+export default function SaleCard({ sale, onEdit, onDelete, readOnly = false }) {
   const formatTime = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    return date.toLocaleTimeString('fr-TN', { hour: '2-digit', minute: '2-digit' });
   };
 
   return (
@@ -20,7 +15,7 @@ export default function SaleCard({ sale, onEdit, onDelete }) {
         {sale.imageUri ? (
           <Image source={{ uri: sale.imageUri }} style={styles.image} resizeMode="cover" />
         ) : (
-          <Text style={styles.placeholder}>No image</Text>
+          <Text style={styles.placeholder}>لا توجد صورة</Text>
         )}
       </View>
 
@@ -28,16 +23,20 @@ export default function SaleCard({ sale, onEdit, onDelete }) {
         <View style={styles.header}>
           <Text style={styles.name} numberOfLines={2}>{sale.name}</Text>
           <View style={styles.actions}>
-            <Pressable style={styles.iconBtn} onPress={() => onEdit(sale)}>
-              <Text style={styles.iconText}>✏️</Text>
-            </Pressable>
-            <Pressable style={[styles.iconBtn, styles.deleteBtn]} onPress={() => onDelete(sale._id)}>
-              <Text style={styles.iconText}>🗑️</Text>
-            </Pressable>
+            {!readOnly ? (
+              <>
+                <Pressable style={styles.iconBtn} onPress={() => onEdit(sale)}>
+                  <Text style={styles.iconText}>✏️</Text>
+                </Pressable>
+                <Pressable style={[styles.iconBtn, styles.deleteBtn]} onPress={() => onDelete(sale._id)}>
+                  <Text style={styles.iconText}>🗑️</Text>
+                </Pressable>
+              </>
+            ) : null}
           </View>
         </View>
 
-        <Text style={styles.price}>{formatPrice(sale.price)}</Text>
+        <Text style={styles.price}>{formatCurrency(sale.price)}</Text>
         <Text style={styles.time}>{formatTime(sale.createdAt)}</Text>
       </View>
     </View>
