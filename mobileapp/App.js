@@ -6,7 +6,7 @@ import { StatusBar } from 'expo-status-bar';
 import AppTabs from './src/navigation/AppTabs';
 import ImportSalesPreviewScreen from './src/screens/ImportSalesPreviewScreen';
 import useSalesStore from './src/stores/useSalesStore';
-import { validateDailySalesPayload } from './src/utils/importExport';
+import { readLocalText, validateDailySalesPayload } from './src/utils/importExport';
 
 Appearance.setColorScheme('light');
 I18nManager.allowRTL(true);
@@ -29,9 +29,8 @@ function DailySalesFileReceiver({ onPreview }) {
           await useSalesStore.getState().hydrate();
         }
 
-        const response = await fetch(uri);
-        if (!response.ok) throw new Error('تعذرت قراءة الملف المشترك.');
-        const payload = validateDailySalesPayload(JSON.parse(await response.text()));
+        const text = await readLocalText(uri);
+        const payload = validateDailySalesPayload(JSON.parse(text));
         onPreview({ payload });
       } catch (error) {
         handledUris.current.delete(uri);

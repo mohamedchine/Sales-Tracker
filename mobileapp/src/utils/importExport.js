@@ -1,5 +1,30 @@
+import * as FileSystem from 'expo-file-system/legacy';
 import * as ImageManipulator from 'expo-image-manipulator';
 import { base64ToImage, imageToBase64 } from './images';
+
+export async function readLocalText(uri) {
+  if (!uri) {
+    throw new Error('تعذرت قراءة الملف المشترك.');
+  }
+
+  const encoding = FileSystem.EncodingType.UTF8;
+
+  try {
+    if (uri.startsWith('content://')) {
+      const dest = `${FileSystem.cacheDirectory}incoming-${Date.now()}.ptsales`;
+      await FileSystem.copyAsync({ from: uri, to: dest });
+      return await FileSystem.readAsStringAsync(dest, { encoding });
+    }
+
+    return await FileSystem.readAsStringAsync(uri, { encoding });
+  } catch {
+    try {
+      return await FileSystem.StorageAccessFramework.readAsStringAsync(uri);
+    } catch {
+      throw new Error('تعذرت قراءة الملف المشترك.');
+    }
+  }
+}
 
 export async function buildSalesExportPayload(sales) {
   const exportedSales = [];

@@ -13,7 +13,7 @@ import * as DocumentPicker from 'expo-document-picker';
 import ScreenShell from '../components/ScreenShell';
 import colors from '../theme/colors';
 import useSalesStore from '../stores/useSalesStore';
-import { buildCompressedSalesExportPayload, parseSalesImportPayload } from '../utils/importExport';
+import { buildCompressedSalesExportPayload, parseSalesImportPayload, readLocalText } from '../utils/importExport';
 
 export default function BackupScreen() {
   const sales = useSalesStore((s) => s.sales);
@@ -113,8 +113,7 @@ export default function BackupScreen() {
 
       if (result.canceled) return;
 
-      const response = await fetch(result.assets[0].uri);
-      const text = await response.text();
+      const text = await readLocalText(result.assets[0].uri);
       const data = JSON.parse(text);
       if (!Array.isArray(data?.sales)) {
         throw new Error('هذا ليس ملف نسخة احتياطية صالحا من متتبع الأسعار.');
