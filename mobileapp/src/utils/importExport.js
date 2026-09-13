@@ -1,29 +1,85 @@
+import { File, Paths } from 'expo-file-system';
 import * as FileSystem from 'expo-file-system/legacy';
 import * as ImageManipulator from 'expo-image-manipulator';
 import { base64ToImage, imageToBase64 } from './images';
+
+function incomingUriCandidates(uri) {
+  const candidates = [uri];
+
+  try {
+    const decoded = decodeURI(uri);
+    if (decoded !== uri) candidates.push(decoded);
+  } catch {
+    // Keep the original URI if it is not valid percent-encoding.
+  }
+
+  try {
+    const decoded = decodeURIComponent(uri);
+    if (!candidates.includes(decoded)) candidates.push(decoded);
+  } catch {
+    // Some Android content URIs contain reserved characters that should stay encoded.
+  }
+
+  return candidates;
+}
+
+async function readWithNewFileApi(uri) {
+  const file = new File(uri);
+  return await file.text();
+}
+
+async function copyThenRead(uri) {
+  const dest = new File(Paths.cache, `incoming-${Date.now()}.txt`);
+  const source = new File(uri);
+  source.copy(dest);
+  return await dest.text();
+}
+
+async function readWithLegacyFileSystem(uri) {
+  const encoding = 'utf8';
+
+  if (uri.startsWith('content://')) {
+    const dest = `${FileSystem.cacheDirectory}incoming-${Date.now()}.txt`;
+    await FileSystem.copyAsync({ from: uri, to: dest });
+    return await FileSystem.readAsStringAsync(dest, { encoding });
+  }
+
+  return await FileSystem.readAsStringAsync(uri, { encoding });
+}
+
+async function readWithFetch(uri) {
+  const response = await fetch(uri);
+  if (!response.ok && response.status !== 0) {
+    throw new Error(`HTTP ${response.status}`);
+  }
+  return await response.text();
+}
 
 export async function readLocalText(uri) {
   if (!uri) {
     throw new Error('تعذرت قراءة الملف المشترك.');
   }
 
-  const encoding = FileSystem.EncodingType.UTF8;
+  const errors = [];
 
-  try {
-    if (uri.startsWith('content://')) {
-      const dest = `${FileSystem.cacheDirectory}incoming-${Date.now()}.ptsales`;
-      await FileSystem.copyAsync({ from: uri, to: dest });
-      return await FileSystem.readAsStringAsync(dest, { encoding });
+  for (const candidate of incomingUriCandidates(uri)) {
+    for (const reader of [readWithNewFileApi, copyThenRead, readWithLegacyFileSystem, readWithFetch]) {
+      try {
+        return await reader(candidate);
+      } catch (error) {
+        errors.push(error);
+      }
     }
 
-    return await FileSystem.readAsStringAsync(uri, { encoding });
-  } catch {
     try {
-      return await FileSystem.StorageAccessFramework.readAsStringAsync(uri);
-    } catch {
-      throw new Error('تعذرت قراءة الملف المشترك.');
+      return await FileSystem.StorageAccessFramework.readAsStringAsync(candidate);
+    } catch (error) {
+      errors.push(error);
     }
   }
+
+  console.warn('readLocalText failed', uri, errors);
+  throw new Error('تعذرت قراءة الملف المشترك.');
 }
 
 export async function buildSalesExportPayload(sales) {

@@ -56,7 +56,7 @@ export default function BackupScreen() {
         'application/json'
       );
 
-      await FileSystem.writeAsStringAsync(uri, jsonContent, { encoding: 'utf8' });
+      await FileSystem.StorageAccessFramework.writeAsStringAsync(uri, jsonContent);
       if (showSuccess) {
         Alert.alert('تم حفظ النسخة الاحتياطية', `تم حفظ ملف النسخة الاحتياطية باسم:\n${fileName}`, [{ text: 'حسنا' }]);
       }
@@ -103,46 +103,64 @@ export default function BackupScreen() {
     }
   };
 
-  const continueImportBackup = async () => {
+  const applyImportedBackup = async (text) => {
+    const data = JSON.parse(text);
+    if (!Array.isArray(data?.sales)) {
+      throw new Error('هذا ليس ملف نسخة احتياطية صالحا من متتبع الأسعار.');
+    }
+    const salesToImport = await parseSalesImportPayload(data);
+    await setSales(salesToImport);
+    Alert.alert('اكتمل الاستيراد', 'تم استيراد نسخة المبيعات الاحتياطية بنجاح.');
+  };
+
+  const pickBackupFileText = async () => {
+    const result = await DocumentPicker.getDocumentAsync({
+      type: ['application/json', 'application/octet-stream', '*/*'],
+      copyToCacheDirectory: false,
+    });
+    if (result.canceled || !result.assets?.[0]?.uri) return null;
+    return readLocalText(result.assets[0].uri);
+  };
+
+  const importBackup = async () => {
+    if (importing) return;
+
     try {
-      setImporting(true);
-      const result = await DocumentPicker.getDocumentAsync({
-        type: 'application/json',
-        copyToCacheDirectory: true,
-      });
+      const text = await pickBackupFileText();
+      if (!text) return;
 
-      if (result.canceled) return;
-
-      const text = await readLocalText(result.assets[0].uri);
-      const data = JSON.parse(text);
-      if (!Array.isArray(data?.sales)) {
-        throw new Error('هذا ليس ملف نسخة احتياطية صالحا من متتبع الأسعار.');
+      const replaceExisting = useSalesStore.getState().sales.length > 0;
+      if (replaceExisting) {
+        Alert.alert(
+          'استبدال بيانات المبيعات الحالية؟',
+          'سيؤدي استيراد نسخة احتياطية إلى استبدال وحذف جميع بيانات المبيعات الحالية على هذا الجهاز. احفظ نسخة احتياطية يدويا أولا إذا أردت الاحتفاظ بها.',
+          [
+            { text: 'إلغاء', style: 'cancel' },
+            {
+              text: 'متابعة',
+              onPress: async () => {
+                try {
+                  setImporting(true);
+                  await applyImportedBackup(text);
+                } catch (err) {
+                  Alert.alert('فشل الاستيراد', err.message || 'تعذر استيراد النسخة الاحتياطية.');
+                } finally {
+                  setImporting(false);
+                }
+              },
+            },
+          ]
+        );
+        return;
       }
-      const salesToImport = await parseSalesImportPayload(data);
-      await setSales(salesToImport);
-      Alert.alert('اكتمل الاستيراد', 'تم استيراد نسخة المبيعات الاحتياطية بنجاح.');
+
+      setImporting(true);
+      await applyImportedBackup(text);
     } catch (err) {
       Alert.alert('فشل الاستيراد', err.message || 'تعذر استيراد النسخة الاحتياطية.');
     } finally {
       setImporting(false);
     }
-  };
-  const importBackup = () => {
-    // If there are no current sales, import immediately without warning
-    if (sales.length === 0) {
-      continueImportBackup();
-      return;
-    }
-  
-    // Only show the warning when existing data will actually be replaced
-    Alert.alert(
-      'استبدال بيانات المبيعات الحالية؟',
-      'سيؤدي استيراد نسخة احتياطية إلى استبدال وحذف جميع بيانات المبيعات الحالية على هذا الجهاز. احفظ نسخة احتياطية يدويا أولا إذا أردت الاحتفاظ بها.',
-      [
-        { text: 'إلغاء', style: 'cancel' },
-        { text: 'متابعة', onPress: continueImportBackup },
-      ]
-    );
   };
 
   return (
