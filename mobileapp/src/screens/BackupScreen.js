@@ -127,8 +127,14 @@ export default function BackupScreen() {
       setImporting(false);
     }
   };
-
   const importBackup = () => {
+    // If there are no current sales, import immediately without warning
+    if (sales.length === 0) {
+      continueImportBackup();
+      return;
+    }
+  
+    // Only show the warning when existing data will actually be replaced
     Alert.alert(
       'استبدال بيانات المبيعات الحالية؟',
       'سيؤدي استيراد نسخة احتياطية إلى استبدال وحذف جميع بيانات المبيعات الحالية على هذا الجهاز. احفظ نسخة احتياطية يدويا أولا إذا أردت الاحتفاظ بها.',
