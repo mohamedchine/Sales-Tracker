@@ -51,6 +51,16 @@ export default function SalesScreen() {
   };
 
   const handleOpenAdd = () => {
+    const today = new Date().toISOString().slice(0, 10);
+  
+    if (selectedDate > today) {
+      Alert.alert(
+        'لا يمكن إضافة البيع',
+        'لا يمكنك إضافة مبيعات بتاريخ مستقبلي. ما زلنا في تاريخ اليوم.'
+      );
+      return;
+    }
+  
     setEditingSale(null);
     setShowModal(true);
   };
